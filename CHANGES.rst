@@ -1,8 +1,9 @@
 Changelog
 =========
 
-4.0.8 (unreleased)
-------------------
+
+4.0.10 (unreleased)
+-------------------
 
 Breaking changes:
 
@@ -15,6 +16,30 @@ New features:
 Bug fixes:
 
 - *add item here*
+
+
+4.0.9 (2021-10-16)
+------------------
+
+Bug fixes:
+
+- Fix vCategories for correct en/de coding.
+  [thet]
+
+- vDuration property value: Fix changing duration sign after multiple ``to_ical`` calls.
+  Ref: #320
+  Fixes: #319
+  [barlik]
+
+
+4.0.8 (2021-10-07)
+------------------
+
+Bug fixes:
+
+- Support added for Python 3.9 and 3.10 (no code changes needed).
+
+- Replace bare 'except:' with 'except Exception:' (#281)
 
 
 4.0.7 (2020-09-07)
@@ -30,7 +55,7 @@ Bug fixes:
 
 Bug fixes:
 
-- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193] 
+- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
 
 
 4.0.5 (2020-03-21)
