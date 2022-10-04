@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import codecs
 import setuptools
 import re
@@ -22,6 +21,9 @@ tests_require = []
 install_requires = [
     'python-dateutil',
     'pytz',
+    # install requirements depending on python version
+    # see https://www.python.org/dev/peps/pep-0508/#environment-markers
+    'backports.zoneinfo; python_version == "3.7" or python_version == "3.8"',
 ]
 
 
@@ -36,12 +38,6 @@ setuptools.setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -59,7 +55,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
+    python_requires=">=3.7",
     install_requires=install_requires,
     entry_points = {'console_scripts': ['icalendar = icalendar.cli:main']},
     extras_require={
