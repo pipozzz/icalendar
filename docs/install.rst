@@ -32,7 +32,7 @@ and execute the code.
 The latest version of Python 3 should work and will be enough
 to get you started.
 If you like to run the tests with different Python versions,
-the following setup proecess should work the same.
+the following setup process should work the same.
 
 Install Tox
 -----------
@@ -112,7 +112,7 @@ Try it out:
     Type "help", "copyright", "credits" or "license" for more information.
     >>> import icalendar
     >>> icalendar.__version__
-    '4.0.10.dev0'
+    '5.0.6'
 
 Building the documentation locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -51,12 +51,13 @@ def tzid_from_dt(dt):
     if hasattr(dt.tzinfo, 'zone'):
         tzid = dt.tzinfo.zone  # pytz implementation
     elif hasattr(dt.tzinfo, 'key'):
-        tzid = dt.tzinfo.key # ZoneInfo implementation
+        tzid = dt.tzinfo.key  # ZoneInfo implementation
     elif hasattr(dt.tzinfo, 'tzname'):
         # dateutil implementation, but this is broken
         # See https://github.com/collective/icalendar/issues/333 for details
         tzid = dt.tzinfo.tzname(dt)
     return tzid
+
 
 def foldline(line, limit=75, fold_sep='\r\n '):
     """Make a string folded as defined in RFC5545
@@ -101,7 +102,10 @@ def param_value(value):
     """
     if isinstance(value, SEQUENCE_TYPES):
         return q_join(value)
-    return dquote(value)
+    elif isinstance(value, str):
+        return dquote(value)
+    else:
+        return dquote(value.to_ical().decode(DEFAULT_ENCODING))
 
 
 # Could be improved
@@ -142,7 +146,7 @@ def dquote(val):
     # so replace it with a single-quote character
     val = val.replace('"', "'")
     if QUOTABLE.search(val):
-        return '"%s"' % val
+        return f'"{val}"'
     return val
 
 
@@ -158,8 +162,7 @@ def q_split(st, sep=',', maxsplit=-1):
     length = len(st)
     inquote = 0
     splits = 0
-    for i in range(length):
-        ch = st[i]
+    for i, ch in enumerate(st):
         if ch == '"':
             inquote = not inquote
         if not inquote and ch == sep:
@@ -255,13 +258,13 @@ class Parameters(CaselessDict):
                     else:
                         result[key] = vals
             except ValueError as exc:
-                raise ValueError('%r is not a valid parameter string: %s'
-                                 % (param, exc))
+                raise ValueError(
+                    f'{param!r} is not a valid parameter string: {exc}')
         return result
 
 
 def escape_string(val):
-    # '%{:02X}'.format(i)
+    # f'{i:02X}'
     return val.replace(r'\,', '%2C').replace(r'\:', '%3A')\
               .replace(r'\;', '%3B').replace(r'\\', '%5C')
 
@@ -288,7 +291,7 @@ class Contentline(str):
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
         assert '\n' not in value, ('Content line can not contain unescaped '
-                                    'new line characters.')
+                                   'new line characters.')
         self = super().__new__(cls, value)
         self.strict = strict
         return self
@@ -334,6 +337,8 @@ class Contentline(str):
             if not name:
                 raise ValueError('Key name is required')
             validate_token(name)
+            if not value_split:
+                value_split = i + 1
             if not name_split or name_split + 1 == value_split:
                 raise ValueError('Invalid content line')
             params = Parameters.from_ical(st[name_split + 1: value_split],
@@ -346,9 +351,7 @@ class Contentline(str):
             return (name, params, values)
         except ValueError as exc:
             raise ValueError(
-                "Content line could not be parsed into parts: '%s': %s"
-                % (self, exc)
-            )
+                f"Content line could not be parsed into parts: '{self}': {exc}")
 
     @classmethod
     def from_ical(cls, ical, strict=False):
@@ -370,6 +373,7 @@ class Contentlines(list):
     Then this should be efficient. for Huge files, an iterator should probably
     be used instead.
     """
+
     def to_ical(self):
         """Simply join self.
         """

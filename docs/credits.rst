@@ -61,6 +61,13 @@ icalendar contributors
 - Robert Spralja <robert.spralja@gmail.com>
 - Maurits van Rees <maurits@vanrees.org>
 - jacadzaca <vitouejj@gmail.com>
+- Mauro Amico <mauro.amico@gmail.com>
+- Alexander Pitkin <peleccom@gmail.com>
+- Michał Górny <mgorny@gentoo.org>
+- Pronoy <lukex9442@gmail.com>
+- Abe Hanoka <abe@habet.dev>
+- `Natasha Mattson <https://github.com/natashamm`_
+- `NikEasY <https://github.com/NikEasY>`_
 
 Find out who contributed::
 

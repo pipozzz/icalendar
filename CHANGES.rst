@@ -1,19 +1,127 @@
 Changelog
 =========
 
+5.0.7 (unreleased)
+------------------
 
-5.0.0a2 (unreleased)
---------------------
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
+
+5.0.6 (2023-05-26)
+------------------
+
+Minor changes:
+
+- Adjusted duration regex
+
+5.0.5 (2023-04-13)
+------------------
+
+Minor changes:
+
+- Added support for BYWEEKDAY in vRecur ref: #268 
+
+Bug fixes:
+
+- Fix problem with ORGANIZER in FREE/BUSY #348
+
+5.0.4 (2022-12-29)
+------------------
+
+Minor changes:
+
+- Improved documentation
+  Ref: #503, #504 
+
+Bug fixes:
+
+- vBoolean can now be used as an parameter
+  Ref: #501
+  Fixes: #500
+  [jacadzaca]
+
+
+5.0.3 (2022-11-23)
+------------------
+
+New features:
+
+- vDDDTypes is hashable #487 #492 [niccokunzmann]
+
+Bug fixes:
+
+- vDDDTypes' equality also checks the dt attribute #497 #492 [niccokunzmann]
+
+5.0.2 (2022-11-03)
+------------------
+
+Minor changes:
+
+- Refactored cal.py, tools.py and completed remaining minimal refactoring in parser.py. Ref: #481 [pronoym99]
+- Calendar.from_ical no longer throws long errors
+  Ref: #473
+  Fixes: #472
+  [jacadzaca]
+- Make datetime value shorter by removing the value parameter where possible.
+  Fixes: #318
+  [jacadzaca], [niccokunzmann]
+
+New features:
+
+- source code in documentation is tested using doctest #445 [niccokunzmann]
+
+Bug fixes:
+
+- broken properties are not added to the parent component
+  Ref: #471
+  Fixes: #464
+  [jacadzaca]
+
+5.0.1 (2022-10-22)
+------------------
+
+Minor changes:
+
+- fixed setuptools deprecation warnings [mgorny]
+
+Bug fixes:
+
+- a well-known timezone timezone prefixed with a `/` is treated as if the slash wasn't present
+  Ref: #467
+  Fixes: #466
+  [jacadzaca]
+
+5.0.0 (2022-10-17)
+------------------
 
 Minor changes:
 
 - removed deprecated test checks [tuergeist]
+- Fix: cli does not support DURATION #354 [mamico]
+- Add changelog and contributing to readthedocs documentation #428 [peleccom]
+- fixed small typos #323 [rohnsha0]
+- unittest to parametrized pytest refactoring [jacadzaca]
 
 Breaking changes:
 
 - Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
-- icalenar now takes a ics file directly as an input
-- icalendar's output is different
+- icalendar now takes a ics file directly as an input
+- icalendar's CLI utility program's output is different
+- Drop Support for Python 3.6. Versions 3.7 - 3.11 are supported and tested.
 
 New features:
 
@@ -33,6 +141,8 @@ Bug fixes:
   Ref: #338
   Fixes: #335
   [tobixen]
+-  add ``__eq__`` to ``icalendar.prop.vDDDTypes`` #391 [jacadzaca]
+- Refactor deprecated unittest aliases for Python 3.11 compatibility #330 [tirkarthi]
 
 5.0.0a1 (2022-07-11)
 --------------------
