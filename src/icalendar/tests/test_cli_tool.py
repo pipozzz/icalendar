@@ -1,8 +1,10 @@
 import unittest
+from datetime import datetime
 
 from icalendar import Calendar, cli
+from icalendar.compatibility import ZoneInfo
 
-INPUT = '''
+INPUT = """
 BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -20,8 +22,7 @@ END:VEVENT
 BEGIN:VEVENT
 ORGANIZER:organizer@test.test
 ATTENDEE:attendee1@example.com
-ATTENDEE:attendee2@test.test
-SUMMARY:Test summury
+SUMMARY:Test summary
 DTSTART;TZID=Europe/Warsaw:20220820T200000
 DTEND;TZID=Europe/Warsaw:20220820T203000
 LOCATION:New Amsterdam, 1010 Test Street
@@ -34,15 +35,31 @@ DTSTART:20220511
 DURATION:P5D
 END:VEVENT
 END:VCALENDAR
-'''
+"""
 
-PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
+
+def local_datetime(dt):
+    return (
+        datetime.strptime(dt, "%Y%m%dT%H%M%S")
+        .replace(tzinfo=ZoneInfo("Europe/Warsaw"))
+        .astimezone()
+        .strftime("%c")
+    )
+
+
+# datetimes are displayed in the local timezone, so we cannot just hardcode them
+firststart = local_datetime("20220820T103400")
+firstend = local_datetime("20220820T113400")
+secondstart = local_datetime("20220820T200000")
+secondend = local_datetime("20220820T203000")
+
+PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     Attendees:
      attendee1 <attendee1@example.com>
      attendee2 <attendee2@test.test>
     Summary    : Test Summary
-    Starts     : Sat Aug 20 10:34:00 2022
-    End        : Sat Aug 20 11:34:00 2022
+    Starts     : {firststart}
+    End        : {firstend}
     Duration   : 1:00:00
     Location   : New Amsterdam, 1000 Sunrise Test Street
     Comment    : Comment
@@ -52,10 +69,9 @@ PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
     Organizer: organizer <organizer@test.test>
     Attendees:
      attendee1 <attendee1@example.com>
-     attendee2 <attendee2@test.test>
-    Summary    : Test summury
-    Starts     : Sat Aug 20 20:00:00 2022
-    End        : Sat Aug 20 20:30:00 2022
+    Summary    : Test summary
+    Starts     : {secondstart}
+    End        : {secondend}
     Duration   : 0:30:00
     Location   : New Amsterdam, 1010 Test Street
     Comment    : 
@@ -75,17 +91,18 @@ PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
     Description:
      
 
-'''
+"""  # noqa: W291, W293
+
 
 class CLIToolTest(unittest.TestCase):
     def test_output_is_proper(self):
         self.maxDiff = None
         calendar = Calendar.from_ical(INPUT)
-        output = ''
-        for event in calendar.walk('vevent'):
-            output += cli.view(event) + '\n\n'
-        self.assertEqual(PROPER_OUTPUT, output)
+        output = ""
+        for event in calendar.walk("vevent"):
+            output += cli.view(event) + "\n\n"
+        assert output == PROPER_OUTPUT
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
-

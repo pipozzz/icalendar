@@ -1,24 +1,454 @@
 Changelog
 =========
 
-5.0.7 (unreleased)
+We use `Semantic Versioning <https://semver.org>`_.
+
+- Breaking changes increase the **major** version number.
+- New features increase the **minor** version number.
+- Minor changes and bug fixes increase the **patch** version number.
+
+7.0.0 (unreleased)
 ------------------
 
 Minor changes:
 
-- ...
+- Split up ``cal.py`` into different files as sub-package.
+- Format more source code with ruff.
+- Exclude type checking block from test coverage.
+- Add private ``icalendar.compatibility`` module to merge functionality for older Python versions into one place.
+- Add type annotation to ``from_ical()``.
+- Fix enum documentation.
+- ``DTSTAMP``, ``LAST_MODIFIED``, and ``CREATED`` can now be set to ``None`` to delete the value.
+- Enhanced ``Calendar.new()`` to support organization and language parameters for automatic ``PRODID`` generation.
+- Added ``duration`` setter to ``Event`` class for more intuitive event creation.
+- Added ``validate()`` method to ``Calendar`` class for explicit validation of required properties and components.
+- Add improved setters for ``start``, ``duration``, and ``end`` properties with explicit locking mechanisms to provide more flexible property manipulation while maintaining RFC 5545 compliance. The implementation includes comprehensive test coverage to ensure proper behavior and backward compatibility.
+- Add ``new()`` method to ``vCalAddress`` class for consistent API usage. The method supports all RFC 5545 parameters including ``CN``, ``CUTYPE``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``LANGUAGE``, ``PARTSTAT``, ``ROLE``, ``RSVP``, and ``SENT-BY``, with automatic ``mailto:`` prefix handling. See `Issue 870 <https://github.com/collective/icalendar/issues/870>`_.
+- Refactor ``set_duration`` methods in ``Event`` and ``Todo`` classes to eliminate code duplication by extracting common logic into shared ``set_duration_with_locking()`` function in ``icalendar.attr``. See `Issue 886 <https://github.com/collective/icalendar/issues/886>`_.
+- Consolidate duplicate logic patterns between ``Event`` and ``Todo`` classes by extracting shared functions in ``icalendar.attr`` for property setters, validation logic, and property access. This eliminates approximately 150 lines of duplicate code while maintaining 100% backward compatibility and RFC 5545 compliance. See `Issue 891 <https://github.com/collective/icalendar/issues/891>`_.
+- Accept and ignore non-standard empty ``RDATE`` fields when parsing ICS files.
+- Improve contributing documentation by adding a change log requirement, adding a pull request template, adding clear CI enforcement warnings, and updating ``README.rst``. See `Issue 890 <https://github.com/collective/icalendar/issues/890>`_.
+- Make coverage submission optional for CI.
+- Bump ``actions/setup-python`` version from 5 to 6 for CI.
+- Add comment explaining tzdata dependency purpose to prevent confusion. See `Issue 900 <https://github.com/collective/icalendar/issues/900>`_.
+- Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See `Issue 777 <https://github.com/collective/icalendar/issues/777>`_.
+- Add PEP 561 py.typed marker to enable type checking support. The package now distributes inline type annotations for mypy and other type checkers. See `Issue 395 <https://github.com/collective/icalendar/issues/395>`_.
+- Bump ``github/codeql-action`` from 3 to 4 in CI fuzzing workflow.
 
 Breaking changes:
 
-- ...
+- Correctly throw a ``TypeError`` for wrong types during property creation where a ``ValueError`` was thrown before.
+- Move ``types_factory`` into ``Component.types_factory``
+- Move ``components_factory`` into ``Component.get_component_class``
+- Move ``icalendar.cal.IncompleteComponent`` error into ``icalendar.error``.
+- Remove ``icalendar.UIDGenerator``. Use Python's built-in `uuid library <https://docs.python.org/3/library/uuid.html>`_ instead.
 
 New features:
 
-- ...
+- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
+- Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
+- Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
+- Add ``Availability`` and ``Available`` components from :rfc:`7953`. See `Issue 654 <https://github.com/collective/icalendar/issues/654>`_ and `Issue 864 <https://github.com/collective/icalendar/issues/864>`_.
+- Add ``stamp``, ``last_modified``, ``created``, ``CREATED``, ``busy_type``, ``class``, ``comments``, ``contacts``, ``location``, ``organizer``, ``priority``, and ``url`` properties to components that use them.
+- Add ``availabilities`` attribtue to ``Calendar``.
+- Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.
+- Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See `Issue 315 <https://github.com/collective/icalendar/issues/315>`_.
+- Make icalendar compatible with `RFC 7986 <https://www.rfc-editor.org/rfc/rfc7986.html>`_.
+  - Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
+- Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
 
 Bug fixes:
 
-- ...
+- Fix read from stdin issue - See `Issue 821 <https://github.com/collective/icalendar/issues/821>`_.
+- Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
+- Fix timezone placement in ``add_missing_timezones()``: ``VTIMEZONE`` components now appear before ``VEVENT`` and other components that reference them. See `Issue 844 <https://github.com/collective/icalendar/issues/844>`_.
+- Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See `Issue 867 <https://github.com/collective/icalendar/issues/867>`_.
+
+6.3.1 (2025-05-20)
+------------------
+
+Bug fixes:
+
+- Remove forced quoting from parameters with space and single quote. See `Issue 836 <https://github.com/collective/icalendar/issues/836>`_.
+
+6.3.0 (2025-05-15)
+------------------
+
+Minor changes:
+
+- Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
+
+New features:
+
+- Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See `Issue 740 <https://github.com/collective/icalendar/issues/740>`_.
+
+Bug fixes:
+
+- Fix component equality where timezones differ for the datetimes but the times are actually equal. See `Issue 828 <https://github.com/collective/icalendar/issues/828>`_.
+- Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
+- Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
+- Build documentation on Read the Docs with the version identifier. See `Issue 826 <https://github.com/collective/icalendar/issues/826>`_.
+
+6.2.0 (2025-05-07)
+------------------
+
+Minor changes:
+
+- Use ``ruff`` to format the source code.
+- Update project metadata to use License-Expression.
+- Use ``tzp.localize(dt, None)`` to remove the timezone from a datetime.
+- Remove the HTML documentation when building with ``tox`` to force rebuild.
+- Switch to PyData Sphinx Theme for documentation. See `Issue 803 <https://github.com/collective/icalendar/issues/804>`_.
+
+New features:
+
+- Add getters ``rrules``, ``rdates``, and ``exdates`` for unified and simple access to these properties. See `Issue 662`_.
+- Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
+- Add a ``color`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 655`_.
+- Add ``sequence`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 802 <https://github.com/collective/icalendar/issues/802>`_.
+- Add ``categories`` attribute to ``Calendar``, ``Event``, ``Todo``, and ``Journal`` components. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
+- Add compatibility to :rfc:`6868`. See `Issue 652 <https://github.com/collective/icalendar/issues/652>`_.
+- Add ``freebusy`` property to the ``Calendar`` to get this type of subcomponents easier.
+- Add parameters from :rfc:`5545` to properties ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``, and ``RELTYPE``. See `Issue 798 <https://github.com/collective/icalendar/issues/798>`_.
+- New properties from :rfc:`7986` can occur multiple times in ``VCALENDAR``. See `PR 808`_.
+
+Bug fixes:
+
+- Fix ``STANDARD`` and ``DAYLIGHT`` components that have a date as ``DTSTART``. See `Issue 218 <https://github.com/collective/icalendar/issues/218>`_
+- Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see `Issue 781 <https://github.com/collective/icalendar/issues/781>`_.
+- ``ALTREP``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``MEMBER``, and ``SENT-BY`` require double quotes. These are now always added.
+- Classify ``CATEGORIES`` as multiple in ``VEVENT``. See `PR 808 <https://github.com/collective/icalendar/pull/808>`_.
+
+6.1.3 (2025-03-19)
+------------------
+
+Bug fixes:
+
+- Fix to permit TZID forward references to ``VTIMEZONE``\ s
+- Stabelize timezone id lookup, see `Issue 780 <https://github.com/collective/icalendar/issues/780>`_.
+
+6.1.2 (2025-03-19)
+------------------
+
+Minor changes:
+
+- Add funding link to Tidelift.
+- Link to related package.
+- Shorten first example in documentation.
+- Add ``name`` and ``email`` properties to ``vCalAddress``.
+- Add type hint for property ``params`` in ``icalendar.prop``.
+- Set default value for ``params`` as ``params={}`` in mulitple constructors in ``icalendar.prop`` to improve usability.
+- Improve object initialization performance in ``icalendar.prop``.
+- Add type hint for ``params`` in multiple constructors in ``icalendar.prop``.
+
+Bug fixes:
+
+- Restrict timezones tested, see `Issue 763 <https://github.com/collective/icalendar/issues/763>`_
+
+6.1.1 (2025-01-18)
+------------------
+
+Minor changes:
+
+- Add a ``weekday`` attribute to :class:`icalendar.prop.vWeekday` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+- Document :class:`icalendar.prop.vRecur` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
+- Print failure of doctest to aid debugging.
+- Improve documentation of :class:`icalendar.prop.vGeo`
+- Fix tests, improve code readability, fix typing. See `Issue 766 <https://github.com/collective/icalendar/issues/766>`_ and `Issue 765 <https://github.com/collective/icalendar/issues/765>`_.
+
+Breaking changes:
+
+- The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+
+New features:
+
+- Add :ref:`Security Policy`
+- Python types in documentation now link to their documentation pages using ``intersphinx``.
+
+6.1.0 (2024-11-22)
+------------------
+
+Minor changes:
+
+- Add ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
+- Add ``DTSTART``, ``TZOFFSETTO`` and ``TZOFFSETFROM`` properties to ``TimezoneStandard`` and ``TimezoneDaylight``. See `Issue 662`_.
+- Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
+- Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
+- Document ``vDatetime.from_ical``
+- Allow passing a ``datetime.date`` to ``TZP.localize_utc`` and ``TZP.localize`` methods.
+- Document component classes with description from :rfc:`5545`.
+- Merge "File Structure" and "Overview" sections in the docs. See `Issue 626 <https://github.com/collective/icalendar/issues/626>`_.
+- Update code blocks in ``usage.rst`` with the correct lexer.
+- Tidy up the docstring for ``icalendar.prop.vPeriod``.
+- Improve typing and fix typing issues
+
+
+New features:
+
+- Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+- Test compatibility with Python 3.13
+- Add ``Timezone.from_tzinfo()`` and ``Timezone.from_tzid()`` to create a ``Timezone`` component from a ``datetime.tzinfo`` timezone. See `Issue 722`_.
+- Add ``icalendar.prop.tzid_from_tzinfo``.
+- Add ``icalendar.alarms`` module to calculate alarm times. See `Issue 716 <https://github.com/collective/icalendar/issues/716>`_.
+- Add ``Event.alarms`` and ``Todo.alarms`` to access alarm calculation.
+- Add ``Component.DTSTAMP`` and ``Component.LAST_MODIFIED`` properties for datetime in UTC.
+- Add ``Component.is_thunderbird()`` to check if the component uses custom properties by Thunderbird.
+- Add ``X_MOZ_SNOOZE_TIME`` and ``X_MOZ_LASTACK`` properties to ``Event`` and ``Todo``.
+- Add ``Alarm.ACKNOWLEDGED``, ``Alarm.TRIGGER``, ``Alarm.REPEAT``, and ``Alarm.DURATION`` properties
+  as well as ``Alarm.triggers`` to calculate alarm triggers.
+- Add ``__doc__`` string documentation for ``vDate``, ``vBoolean``, ``vCalAddress``, ``vDuration``, ``vFloat``, ``vGeo``, ``vInt``, ``vPeriod``, ``vTime``, ``vUTCOffset`` and ``vUri``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
+- Add ``DTSTART``, ``TZOFFSETTO``, and ``TZOFFSETFROM`` to ``TimezoneStandard`` and ``TimezoneDaylight``
+- Use ``example`` methods of components without arguments.
+- Add ``events``, ``timezones``, and ``todos`` property to ``Calendar`` for nicer access.
+- To calculate which timezones are in use and add them to the ``Calendar`` when needed these methods are added: ``get_used_tzids``, ``get_missing_tzids``, and ``add_missing_timezones()``.
+- Identify the TZID of more timezones from dateutil.
+- Identify totally unknown timezones using a UTC offset lookup tree generated in ``icalendar.timezone.equivalent_timezone_ids`` and stored in ``icalendar.timezone.equivalent_timezone_ids``.
+- Add ``icalendar.timezone.tzid`` to identify a timezone's TZID.
+
+Bug fixes:
+
+- Add ``icalendar.timezone`` to the documentation.
+
+.. _`Issue 722`: https://github.com/collective/icalendar/issues/722
+
+6.0.1 (2024-10-13)
+------------------
+
+New features:
+
+- Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Event`` components. See `Issue 662`_.
+- Added ``end``, ``start``, ``duration``, and ``DTSTART`` attributes to ``Journal`` components. See `Issue 662`_.
+
+Bug fixes:
+
+- Fix a few ``__all__`` variables.
+- Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
+
+.. _`Issue 662`: https://github.com/collective/icalendar/issues/662
+
+6.0.0 (2024-09-28)
+------------------
+
+Minor changes:
+
+- Add ``__all__`` variable to each modules in ``icalendar`` package
+- Improve test coverage.
+- Adapt ``test_with_doctest.py`` to correctly run on Windows.
+- Measure branch coverage when running tests.
+- Export ``Component`` base class for typing
+
+New features:
+
+- Use ``pyproject.toml`` file instead of ``setup.py``
+
+Bug fixes:
+
+- Fix link to stable release of tox in documentation.
+- Fix a bad ``bytes`` replace in ``unescape_char``.
+- Handle ``ValueError`` in ``vBinary.from_ical``.
+- Ignore the BOM character in incorrectly encoded ics files.
+
+6.0.0a0 (2024-07-03)
+--------------------
+
+Minor changes:
+
+- Test that all code works with both ``pytz`` and ``zoneinfo``.
+- Add message to GitHub release, pointing to the changelog
+- Make coverage report submission optional for pull requests
+- Parallelize coverage
+- Rename ``master`` branch to ``main``, see `Issue
+  <https://github.com/collective/icalendar/issues/627>`_
+- Update ``docs/usage.rst`` to use zoneinfo instead of pytz.
+- Added missing public classes and functions to API documentation.
+- Improved namespace management in the ``icalendar`` directory.
+- Add Python version badge and badge for test coverage
+- Remove 4.x badge
+- Update list of ``tox`` environments
+- Use Coveralls' GitHub Action
+- Check distribution in CI
+
+Breaking changes:
+
+- Use ``zoneinfo`` for ``icalendar`` objects created from strings,
+  see `Issue #609 <https://github.com/collective/icalendar/issues/609>`_.
+
+  This is an tested extension of the functionality, not a restriction:
+  If you create ``icalendar`` objects with ``pytz`` timezones in your code,
+  ``icalendar`` will continue to work in the same way.
+  Your code is not affected.
+
+  ``zoneinfo`` will be used for those **objects that** ``icalendar``
+  **creates itself**.
+  This happens for example when parsing an ``.ics`` file, strings or bytes with
+  ``from_ical()``.
+
+  If you rely on ``icalendar`` providing timezones from ``pytz``, you can add
+  one line to your code to get the behavior of versions below 6:
+
+  .. code:: Python
+
+      import icalendar
+      icalendar.use_pytz()
+
+- Replaced ``pkg_resources.get_distribution`` with ``importlib.metadata`` in
+  ``docs/conf.py`` to allow building docs on Python 3.12.
+
+- Remove ``is_broken`` property. Use ``errors`` instead to check if a
+  component had suppressed parsing errors.
+  See `Issue 424 <https://github.com/collective/icalendar/issues/424>`_.
+
+- Remove untested and broken ``LocalTimezone`` and ``FixedOffset`` tzinfo
+  sub-classes, see `Issue 67 <https://github.com/collective/icalendar/issues/67>`_
+
+- Remove Python 3.7 as compatible. icalendar is compatible with Python
+  versions 3.8 - 3.12, and PyPy3.
+
+- Remove ``pytz`` as a dependency of ``icalendar``. If you require ``pytz``,
+  add it to your dependency list or install it additionally with::
+
+      pip install icalendar==6.* pytz
+
+New features:
+
+- Check code quality with `Ruff <https://docs.astral.sh/ruff/>`_, optional report
+- Test compatibility with Python 3.12
+- Add function ``icalendar.use_pytz()``.
+- Allows selecting components with ``walk(select=func)`` where ``func`` takes a
+  component and returns ``True`` or ``False``.
+- Add compatibility to :rfc:`7529`, adding ``vMonth`` and ``vSkip``
+- Add ``sphinx-autobuild`` for ``livehtml`` Makefile target.
+- Add pull request preview on Read the Docs, building only on changes to documentation-related files.
+- Add link to pull request preview builds in the pull request description only when there are changes to documentation-related files.
+- Add documentation of live HTML preview of documentation and clean up of ``install.rst``.
+- Add ``sphinx-copybutton`` to allow copying code blocks with a single click of a button.
+
+Bug fixes:
+
+- Change documentation to represent compatibility with Python 3.8 - 3.12, and PyPy3.
+- Rename RFC 2445 to RFC 5545, see `Issue 278
+  <https://github.com/collective/icalendar/issues/278>`_
+
+5.0.13 (2024-06-20)
+-------------------
+
+Minor changes:
+
+- Guide to delete the build folder before running tests
+- Add funding information
+- Make documentation build with Python 3.12
+- Update windows to olson conversion for Greenland Standard Time
+- Extend examples in Usage with alarm and recurrence
+- Document how to serve the built documentation to view with the browser
+- Improve test coverage
+
+New features:
+
+- Create GitHub releases for each tag.
+
+Bug fixes:
+
+- Parse calendars with X-COMMENT properties at the end the file by ignoring these properites
+
+
+5.0.12 (2024-03-19)
+-------------------
+
+Minor changes:
+
+- Analyse code coverage of test files
+- Added corpus to fuzzing directory
+- Added exclusion of fuzzing corpus in MANIFEST.in
+- Augmented fuzzer to optionally convert multiple calendars from a source string
+- Add script to convert OSS FUZZ test cases to Python/pytest test cases
+- Added additional exception handling of defined errors to fuzzer, to allow fuzzer to explore deeper
+- Added more instrumentation to fuzz-harness
+- Rename "contributor" to "collaborator" in documentation
+- Correct the outdated "icalendar view myfile.ics" command in documentation. #588
+- Update GitHub Actions steps versions
+- Keep GitHub Actions up to date with GitHub's Dependabot
+
+Bug fixes:
+
+- Fixed index error in cal.py when attempting to pop from an empty stack
+- Fixed type error in prop.py when attempting to join strings into a byte-string
+- Caught Wrong Date Format in ical_fuzzer to resolve fuzzing coverage blocker
+
+5.0.11 (2023-11-03)
+-------------------
+
+Minor changes:
+
+- The cli utility now displays start and end datetimes in the user's local timezone.
+  Ref: #561
+  [vimpostor]
+
+New features:
+
+- Added fuzzing harnesses, for integration to OSSFuzz.
+- icalendar releases are deployed to Github releases
+  Fixes: #563
+  [jacadzaca]
+
+Bug fixes:
+
+- CATEGORIES field now accepts a string as argument
+  Ref: #322
+  [jacadzaca]
+- Multivalue FREEBUSY property is now parsed properly
+  Ref: #27
+  [jacadzaca]
+- Compare equality and inequality of calendars more completely
+  Ref: #570
+- Use non legacy timezone name.
+  Ref: #567
+- Add some compare functions.
+  Ref: #568
+- Change OSS Fuzz build script to point to harnesses in fuzzing directory
+  Ref: #574
+
+5.0.10 (2023-09-26)
+-------------------
+
+Bug fixes:
+
+- Component._encode stops ignoring parameters argument on native values, now merges them
+  Fixes: #557
+  [zocker1999net]
+
+5.0.9 (2023-09-24)
+------------------
+
+Bug fixes:
+
+- PERIOD values now set the timezone of their start and end. #556
+
+5.0.8 (2023-09-18)
+------------------
+
+Minor changes:
+
+- Update build configuration to build readthedocs. #538
+- No longer run the ``plone.app.event`` tests.
+- Add documentation on how to parse ``.ics`` files. #152
+- Move pip caching into Python setup action.
+- Check that issue #165 can be closed.
+- Updated about.rst for issue #527
+- Avoid ``vText.__repr__`` BytesWarning.
+
+Bug fixes:
+
+- Calendar components are now properly compared
+  Ref: #550
+  Fixes: #526
+  [jacadzaca]
+
+5.0.7 (2023-05-29)
+------------------
+
+Bug fixes:
+
+- to_ical() now accepts RRULE BYDAY values>=10 #518
 
 
 5.0.6 (2023-05-26)
@@ -33,7 +463,7 @@ Minor changes:
 
 Minor changes:
 
-- Added support for BYWEEKDAY in vRecur ref: #268 
+- Added support for BYWEEKDAY in vRecur ref: #268
 
 Bug fixes:
 
@@ -45,7 +475,7 @@ Bug fixes:
 Minor changes:
 
 - Improved documentation
-  Ref: #503, #504 
+  Ref: #503, #504
 
 Bug fixes:
 
@@ -169,7 +599,7 @@ New features:
 - No longer test on Python 3.4, 3.5 and PyPy2, because we cannot get it to work.
   Technically it should still work, it is just no longer tested.
   Do not expect much development on branch 4.x anymore.
-  The master branch will be for the remaining Python versions that we support.
+  The main branch will be for the remaining Python versions that we support.
   [maurits]
 
 Bug fixes:
@@ -214,7 +644,6 @@ Bug fixes:
 Bug fixes:
 
 - Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
-
 
 4.0.5 (2020-03-21)
 ------------------
@@ -302,7 +731,7 @@ New features:
 
 Bug fixes:
 
-- Fix VTIMEZONEs including RDATEs #234.  [geier]
+- Fix ``VTIMEZONE``\ s including RDATEs #234.  [geier]
 
 
 3.11.5 (2017-07-03)
@@ -310,10 +739,10 @@ Bug fixes:
 
 Bug fixes:
 
-- added an assertion that VTIMEZONE sub-components' DTSTART must be of type
+- added an assertion that ``VTIMEZONE`` sub-components' DTSTART must be of type
   DATETIME [geier]
 
-- Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs and
+- Fix handling of ``VTIMEZONE``\ s with subcomponents with the same DTSTARTs and
   OFFSETs but which are of different types  [geier]
 
 
@@ -325,7 +754,7 @@ Bug fixes:
 - Don't break on parameter values which contain equal signs, e.g. base64 encoded
   binary data [geier]
 
-- Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs.
+- Fix handling of ``VTIMEZONE``\ s with subcomponents with the same DTSTARTs.
   [geier]
 
 
@@ -446,7 +875,7 @@ Fixes:
 3.9.0 (2015-03-24)
 ------------------
 
-- Creating timezone objects from VTIMEZONE components.
+- Creating timezone objects from ``VTIMEZONE`` components.
   [geier]
 
 - Make ``python-dateutil`` a dependency.
@@ -735,9 +1164,9 @@ Fixes:
 
 - Add 'recursive' argument to property_items() to switch recursive listing.
   For example when parsing a text/calendar text including multiple components
-  (e.g. a VCALENDAR with 5 VEVENTs), the previous situation required us to look
-  over all properties in VEVENTs even if we just want the properties under the
-  VCALENDAR component (VERSION, PRODID, CALSCALE, METHOD).
+  (e.g. a ``VCALENDAR`` with 5 ``VEVENT``s), the previous situation required us to look
+  over all properties in ``VEVENT``s even if we just want the properties under the
+  ``VCALENDAR`` component (VERSION, PRODID, CALSCALE, METHOD).
   [dmikurube]
 
 - All unit tests fixed.
@@ -809,7 +1238,7 @@ Fixes:
   [garbas]
 
 - hook out github repository to https://readthedocs.org service so sphinx
-  documentation is generated on each commit (for master). Documentation can be
+  documentation is generated on each commit (for main). Documentation can be
   visible on: https://icalendar.readthedocs.io/en/latest/
   [garbas]
 
